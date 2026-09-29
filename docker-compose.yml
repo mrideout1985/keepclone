@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-keepclone}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-keepclone}
+      POSTGRES_DB: ${POSTGRES_DB:-keepclone}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - keepclone_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-keepclone} -d ${POSTGRES_DB:-keepclone}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  keepclone_pgdata:
