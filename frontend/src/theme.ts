@@ -1,6 +1,6 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
-export const theme = createTheme({
+const baseTheme = createTheme({
   palette: {
     mode: "dark",
     primary: { main: "#FF0B55", light: "#ff8fae", dark: "#CF0F47" },
@@ -20,6 +20,8 @@ export const theme = createTheme({
     MuiButton: { defaultProps: { disableElevation: true } },
   },
 });
+
+export const theme = responsiveFontSizes(baseTheme);
 
 export const NOTE_COLORS = {
   default: "#0b0708",
