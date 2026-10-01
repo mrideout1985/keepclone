@@ -9,7 +9,6 @@ const server = app.listen(config.PORT, () => {
   logger.info(`Backend listening on http://localhost:${config.PORT}`);
 });
 
-// Programmer errors: log and crash so the orchestrator restarts a clean process.
 process.on("uncaughtException", (err) => {
   logger.fatal({ err }, "Uncaught exception");
   process.exit(1);

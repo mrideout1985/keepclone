@@ -1,13 +1,11 @@
 import axios from "axios";
 import { env } from "@/config/env";
 
-/**
- * Single preconfigured API client reused across the app (bulletproof-react).
- * Cross-cutting concerns (auth, error normalisation) belong in interceptors.
- */
 export const apiClient = axios.create({
   baseURL: env.VITE_API_URL,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
+  adapter: "fetch",
 });
 
 apiClient.interceptors.response.use(

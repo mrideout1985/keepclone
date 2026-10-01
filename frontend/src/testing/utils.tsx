@@ -5,7 +5,6 @@ import { type RenderOptions, render } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 import { theme } from "@/theme";
 
-// Fresh QueryClient per render so tests don't share cache.
 function createWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
