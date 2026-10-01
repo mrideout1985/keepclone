@@ -12,10 +12,6 @@ export function getCorrelationId(): string | undefined {
   return storage.getStore()?.correlationId;
 }
 
-/**
- * Assigns a correlation id per request and makes it available anywhere
- * downstream (logs, errors) without threading it through every function.
- */
 export function requestContext(
   req: Request,
   res: Response,

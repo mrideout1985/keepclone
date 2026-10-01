@@ -2,7 +2,6 @@ import { resolve } from "node:path";
 import dotenv from "dotenv";
 import { z } from "zod";
 
-// Load env from backend/.env first, then fall back to the repo-root .env.
 dotenv.config({
   path: [resolve(process.cwd(), ".env"), resolve(process.cwd(), "../.env")],
   quiet: true,
@@ -18,12 +17,17 @@ const envSchema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
     .default("info"),
+  SESSION_TTL_DAYS: z.coerce.number().int().positive().default(30),
+  COOKIE_SECURE: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
+  COOKIE_DOMAIN: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  // Fail fast: a misconfigured process should never boot.
   const issues = parsed.error.issues
     .map((i) => `  - ${i.path.join(".") || "(root)"}: ${i.message}`)
     .join("\n");
@@ -31,11 +35,14 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+const isProduction = parsed.data.NODE_ENV === "production";
+
 export const config = {
   ...parsed.data,
   corsOrigins: parsed.data.CORS_ORIGIN.split(",").map((o) => o.trim()),
-  isProduction: parsed.data.NODE_ENV === "production",
+  isProduction,
   isTest: parsed.data.NODE_ENV === "test",
+  cookieSecure: parsed.data.COOKIE_SECURE ?? isProduction,
 };
 
 export type Config = typeof config;

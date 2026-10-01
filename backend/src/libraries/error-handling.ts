@@ -3,10 +3,6 @@ import { ZodError } from "zod";
 import { logger } from "./logger.js";
 import { getCorrelationId } from "./request-context.js";
 
-/**
- * Application error. `isOperational` marks expected failures (bad input, not
- * found) as opposed to programmer errors / bugs, which should crash.
- */
 export class AppError extends Error {
   readonly httpStatus: number;
   readonly isOperational: boolean;
@@ -34,7 +30,6 @@ export class ValidationError extends AppError {
   }
 }
 
-/** 404 handler for unmatched routes. */
 export function notFoundHandler(
   req: Request,
   _res: Response,
@@ -43,10 +38,6 @@ export function notFoundHandler(
   next(new NotFoundError(`Route not found: ${req.method} ${req.originalUrl}`));
 }
 
-/**
- * Centralized error handler — the single place that turns an error into an
- * HTTP response. Controllers should throw, not shape responses themselves.
- */
 export function errorHandler(
   err: unknown,
   _req: Request,
@@ -81,7 +72,6 @@ export function errorHandler(
     return;
   }
 
-  // Unknown / programmer error — log loudly, leak nothing.
   logger.error({ err }, "Unhandled error");
   res.status(500).json({
     error: { message: "Internal server error", correlationId },
