@@ -50,5 +50,13 @@ export default tseslint.config(
       globals: { ...globals.node, ...globals.browser },
     },
   },
+  // Playwright e2e is not React; its fixture `use` callback is not a hook.
+  {
+    files: ["e2e/**"],
+    rules: {
+      "react-hooks/rules-of-hooks": "off",
+      "react-refresh/only-export-components": "off",
+    },
+  },
   prettier,
 );

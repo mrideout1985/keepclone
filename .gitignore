@@ -22,6 +22,7 @@ coverage/
 playwright-report/
 test-results/
 .playwright/
+.auth/
 
 # logs
 *.log
