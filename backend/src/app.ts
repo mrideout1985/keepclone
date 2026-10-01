@@ -1,7 +1,9 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Express, type Request, type Response } from "express";
 import helmet from "helmet";
 import { pinoHttp } from "pino-http";
+import { authRouter } from "./components/user/entry-points/user-routes.js";
 import { config } from "./config/index.js";
 import { errorHandler, notFoundHandler } from "./libraries/error-handling.js";
 import { logger } from "./libraries/logger.js";
@@ -10,19 +12,13 @@ import {
   requestContext,
 } from "./libraries/request-context.js";
 
-/**
- * Builds the Express app without starting a listener, so integration tests
- * can drive it with Supertest.
- *
- * Register feature routers below, e.g.:
- *   app.use("/api/<feature>", <feature>Router);
- */
 export function buildApp(): Express {
   const app = express();
 
   app.use(helmet());
-  app.use(cors({ origin: config.corsOrigins }));
+  app.use(cors({ origin: config.corsOrigins, credentials: true }));
   app.use(express.json());
+  app.use(cookieParser());
   app.use(requestContext);
   app.use(
     pinoHttp({
@@ -35,7 +31,7 @@ export function buildApp(): Express {
     res.json({ status: "ok" });
   });
 
-  // Feature routers go here.
+  app.use("/api/auth", authRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
